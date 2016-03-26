@@ -7,8 +7,8 @@ class Bunnelby::Server
     @exchange = @channel.default_exchange
   end
 
-  def start
-    @queue.subscribe(:block => true) do |delivery_info, properties, payload|
+  def start(blocking = true)
+    @queue.subscribe(:block => blocking) do |delivery_info, properties, payload|
       log "[#{self.class.to_s}] processing request on '#{@queue.name}':"
       log payload
 
