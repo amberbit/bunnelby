@@ -51,12 +51,18 @@ class Bunnelby::Client
     raise CommunicationError unless response
 
     JSON.parse(response)
+  rescue Exception => e
+    log_exception(e)
+    raise e
   end
 
   def do_send(command, arguments)
     @_exchange.publish({command: command, arguments: arguments}.to_json,
                        routing_key: @_server_queue)
 
+  rescue Exception => e
+    log_exception(e)
+    raise e
   end
 
   def do_subscribe
@@ -71,10 +77,16 @@ class Bunnelby::Client
         that.lock.synchronize{that.condition.signal}
       end
     end
+  rescue Exception => e
+    log_exception(e)
+    raise e
   end
 
   def do_unsubscribe
     @_consumer.cancel
+  rescue Exception => e
+    log_exception(e)
+    raise e
   end
 end
 
